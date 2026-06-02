@@ -16,7 +16,7 @@ app = FastAPI()
 # so other websites cannot secretly use your backend API.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://medical-rag-agent-f2onvfxjd4wewbyudgcpe2.streamlit.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
