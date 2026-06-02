@@ -12,6 +12,8 @@ load_dotenv()
 
 app = FastAPI()
 
+# SECURITY NOTE: Replace "*" with your actual Streamlit frontend URL later 
+# so other websites cannot secretly use your backend API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -39,7 +41,16 @@ async def ask_bot(request: QueryRequest):
     try:
         # 1. Retrieve context
         docs = retriever.invoke(request.question)
-        context = "\n\n".join([f"Source: {d.metadata['source'].replace('\\', '/')} (Page {d.metadata.get('page', 'Unknown')})\n{d.page_content}" for d in docs])
+        
+        # --- SYNTAX FIX APPLIED HERE ---
+        formatted_docs = []
+        for d in docs:
+            clean_source = d.metadata['source'].replace('\\', '/')
+            page_num = d.metadata.get('page', 'Unknown')
+            formatted_docs.append(f"Source: {clean_source} (Page {page_num})\n{d.page_content}")
+
+        context = "\n\n".join(formatted_docs)
+        # -------------------------------
 
         # 2. Setup JSON Parser
         parser = JsonOutputParser(pydantic_object=RAGResponse)
